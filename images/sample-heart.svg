@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
-  <rect width="400" height="300" fill="#ffeef3"/>
-  <path d="M200 232 C118 172 88 128 88 94 C88 60 118 40 148 40 C174 40 190 56 200 76 C210 56 226 40 252 40 C282 40 312 60 312 94 C312 128 282 172 200 232 Z" fill="#e7889e"/>
-  <text x="200" y="278" text-anchor="middle" font-family="Georgia, serif" font-size="15" fill="#b06b7d">placeholder — swap for a real file in /images</text>
-</svg>
