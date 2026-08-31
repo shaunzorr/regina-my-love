@@ -1,0 +1,504 @@
+/* ===========================================================================
+   All The Reasons — styles
+   Mobile-first. Animation is transform/opacity only, so it stays smooth on
+   mid-range Android. Timings here are mirrored by the constants in app.js.
+   =========================================================================== */
+
+:root {
+  --bg-top: #fff7f1;
+  --bg-mid: #fff0f2;
+  --bg-bottom: #ffe2ec;
+  --ink: #4a3b42;
+  --ink-soft: #8c7680;
+  --rose: #c96f88;
+  --rose-deep: #a9506a;
+  --paper: #fffdf7;
+  --paper-edge: #eeded0;
+
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-ui: "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* jar size — everything else is derived from this */
+  --jar-w: min(84vw, 46vh, 340px);
+  --jar-h: calc(var(--jar-w) * 1.36);
+
+  /* set by app.js: distance from the note's resting spot up to the jar mouth */
+  --mouth-offset: -180px;
+
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  font-family: var(--font-ui);
+  color: var(--ink);
+  background:
+    radial-gradient(120% 80% at 50% 0%, #fffaf4 0%, rgba(255, 250, 244, 0) 60%),
+    linear-gradient(168deg, var(--bg-top), var(--bg-mid) 45%, var(--bg-bottom));
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#app {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 36rem;
+  margin: 0 auto;
+  padding: calc(1.5rem + var(--safe-top)) 1.25rem calc(1.5rem + var(--safe-bottom));
+}
+
+[hidden] { display: none !important; }
+
+/* ================================================================= scene === */
+
+.scene {
+  position: relative;
+  width: 100%;
+  min-height: calc(var(--jar-h) + 5rem);
+  display: grid;
+  place-items: center;
+}
+
+/* =================================================================== jar === */
+
+.jar-wrap {
+  transition: opacity 520ms ease, transform 520ms ease, filter 520ms ease;
+}
+
+/* Dim only — deliberately no transform here, so the jar mouth stays exactly
+   where app.js measured it for the emerge animation. The delay holds the jar
+   at full strength until the scroll has cleared the rim. */
+.scene.has-note .jar-wrap {
+  opacity: 0.34;
+  filter: blur(1.5px);
+  pointer-events: none;
+  transition-delay: 620ms;
+}
+
+.jar {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0.5rem;
+  margin: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: inherit;
+  touch-action: manipulation;
+  border-radius: 28px;
+}
+
+.jar:focus-visible {
+  outline: 3px solid var(--rose);
+  outline-offset: 6px;
+}
+
+.jar-float {
+  display: block;
+  animation: float 5s ease-in-out infinite;
+}
+
+.jar-svg {
+  width: var(--jar-w);
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 18px 26px rgba(169, 80, 106, 0.2));
+}
+
+.jar:active .jar-svg { transform: scale(0.98); }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-7px); }
+}
+
+/* the lid + the wobble, while the jar is opening */
+
+#lid {
+  transform-box: fill-box;
+  transform-origin: 32% 100%;
+}
+
+.jar.is-opening #lid {
+  animation: lid-open 1050ms cubic-bezier(0.3, 0.8, 0.3, 1) both;
+}
+
+@keyframes lid-open {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  16%  { transform: translate(3px, -32px) rotate(-14deg); }
+  52%  { transform: translate(4px, -36px) rotate(-17deg); }
+  82%  { transform: translate(1px, -6px) rotate(-3deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+.jar.is-opening .jar-svg {
+  animation: jar-wobble 760ms ease-out both;
+}
+
+@keyframes jar-wobble {
+  0%   { transform: rotate(0deg) scale(1); }
+  15%  { transform: rotate(-2.2deg) scale(1.015); }
+  38%  { transform: rotate(1.6deg) scale(1.008); }
+  62%  { transform: rotate(-0.9deg) scale(1); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+
+/* sparkles */
+
+.spark { opacity: 0; transform-box: fill-box; transform-origin: 50% 50%; }
+
+.jar.is-opening .spark { animation: twinkle 900ms ease-out both; }
+.jar.is-opening .spark--b { animation-delay: 140ms; }
+.jar.is-opening .spark--c { animation-delay: 260ms; }
+
+@keyframes twinkle {
+  0%   { opacity: 0; transform: scale(0.2) rotate(-30deg); }
+  35%  { opacity: 0.9; transform: scale(1.15) rotate(10deg); }
+  100% { opacity: 0; transform: scale(0.5) rotate(40deg); }
+}
+
+.hint {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--rose);
+  animation: breathe 2.6s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.5; transform: translateY(0); }
+  50%      { opacity: 1;   transform: translateY(-2px); }
+}
+
+/* ================================================================== note === */
+
+.note-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  pointer-events: none;
+}
+
+.note-layer > * { pointer-events: auto; }
+
+/* the scroll: outer element travels out of the jar, inner paper unrolls */
+
+.scroll {
+  position: relative;
+  width: 100%;
+  max-width: 30rem;
+  transform: rotate(-1deg);
+}
+
+/* the rolled-up cylinder, visible while the note is still furled */
+.scroll__roll {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  z-index: 2;
+  width: 92%;
+  height: 21px;
+  transform: translateX(-50%);
+  border-radius: 11px;
+  opacity: 0;
+  background:
+    /* darker caps at each end, so it reads as a cylinder seen end-on */
+    linear-gradient(90deg,
+      rgba(190, 158, 124, 0.45) 0 1.5%,
+      rgba(190, 158, 124, 0) 5% 95%,
+      rgba(190, 158, 124, 0.45) 98.5% 100%),
+    linear-gradient(180deg, #fffdf7 0%, #fdf6e9 34%, #f0e1cb 72%, #ddc7ac 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.95) inset,
+    0 7px 16px -7px rgba(120, 70, 90, 0.55);
+}
+
+.scroll__paper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.1rem;
+  min-height: 8.5rem;
+  padding: clamp(1.6rem, 6vw, 2.5rem);
+  background:
+    linear-gradient(180deg, #fffdf7 0%, #fffaf0 100%);
+  border: 1px solid var(--paper-edge);
+  border-radius: 4px 4px 8px 8px;
+  transform-origin: 50% 0;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.8) inset,
+    0 22px 44px -18px rgba(120, 70, 90, 0.4);
+}
+
+.scroll__paper:focus-visible {
+  outline: 3px solid var(--rose);
+  outline-offset: 5px;
+}
+
+/* soft curl shading along the top edge, under the roll */
+.scroll__paper::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 18px;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(180deg, rgba(197, 168, 140, 0.3), rgba(197, 168, 140, 0));
+  pointer-events: none;
+}
+
+.scroll__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  width: 100%;
+}
+
+.scroll__text {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 5.2vw, 1.85rem);
+  line-height: 1.5;
+  color: var(--ink);
+  text-align: center;
+  text-wrap: balance;
+}
+
+.scroll__figure {
+  margin: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.scroll__figure img {
+  max-width: 100%;
+  max-height: 30vh;
+  height: auto;
+  border-radius: 6px;
+  border: 1px solid var(--paper-edge);
+  box-shadow: 0 10px 22px -12px rgba(120, 70, 90, 0.45);
+}
+
+/* ------------------------------------------------------- emerge sequence --- */
+/*  lid pops (0–1050) · scroll rises (160–800) · unrolls (780–1200) ·
+    words fade in (1120–1420) · roll fades away (1170–1370)                  */
+
+.scroll.is-emerging {
+  animation: scroll-travel 640ms cubic-bezier(0.3, 0.58, 0.32, 1) 160ms both;
+  will-change: transform, opacity;
+}
+
+.scroll.is-emerging .scroll__paper {
+  animation: paper-unroll 420ms cubic-bezier(0.24, 0.88, 0.32, 1) 780ms both;
+  will-change: transform;
+}
+
+.scroll.is-emerging .scroll__content {
+  animation: content-in 300ms ease-out 1120ms both;
+}
+
+.scroll.is-emerging .scroll__roll {
+  animation: roll-fade 200ms ease-out 1170ms both;
+}
+
+/* Starts a touch below the mouth so it reads as rising up out of the jar,
+   still tightly furled and small, then grows as it clears the rim. */
+@keyframes scroll-travel {
+  0% {
+    opacity: 0;
+    transform: translateY(calc(var(--mouth-offset) + 16px)) scale(0.15) rotate(-18deg);
+  }
+  16% { opacity: 1; }
+  70% {
+    transform: translateY(calc(var(--mouth-offset) * 0.16)) scale(1.04) rotate(4deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(-1deg);
+  }
+}
+
+@keyframes paper-unroll {
+  0%   { transform: scaleY(0.012); opacity: 0.5; }
+  55%  { transform: scaleY(1.07);  opacity: 1; }
+  78%  { transform: scaleY(0.965); }
+  100% { transform: scaleY(1);     opacity: 1; }
+}
+
+@keyframes content-in {
+  from { opacity: 0; transform: translateY(9px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes roll-fade {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* --------------------------------------------------- retract (roll away) --- */
+
+.scroll.is-retracting {
+  animation: scroll-return 240ms ease-in 200ms both;
+}
+
+.scroll.is-retracting .scroll__paper {
+  animation: paper-reroll 200ms ease-in 40ms both;
+}
+
+.scroll.is-retracting .scroll__content {
+  animation: content-out 110ms ease-in both;
+}
+
+.scroll.is-retracting .scroll__roll {
+  animation: roll-in 120ms ease-out 60ms both;
+}
+
+@keyframes scroll-return {
+  from { opacity: 1; transform: translateY(0) scale(1) rotate(-1deg); }
+  to   { opacity: 0; transform: translateY(var(--mouth-offset)) scale(0.26) rotate(-12deg); }
+}
+
+@keyframes paper-reroll {
+  from { transform: scaleY(1); opacity: 1; }
+  to   { transform: scaleY(0.012); opacity: 0.5; }
+}
+
+@keyframes content-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes roll-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ================================================================ chrome === */
+
+.note-chrome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.scroll.is-emerging ~ .note-chrome {
+  animation: content-in 300ms ease-out 1180ms both;
+}
+
+.scroll.is-retracting ~ .note-chrome {
+  animation: content-out 140ms ease-in both;
+}
+
+.cycle-note {
+  margin: 0;
+  max-width: 20rem;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--rose-deep);
+  text-wrap: balance;
+}
+
+.note-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn {
+  appearance: none;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  border-radius: 999px;
+  touch-action: manipulation;
+  transition: transform 120ms ease, background 160ms ease, color 160ms ease;
+}
+
+.btn:active { transform: scale(0.97); }
+
+.btn:focus-visible {
+  outline: 3px solid var(--rose);
+  outline-offset: 3px;
+}
+
+.btn--primary {
+  border: 0;
+  padding: 0.8rem 1.7rem;
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--rose);
+  box-shadow: 0 12px 22px -12px rgba(169, 80, 106, 0.85);
+}
+
+.btn--primary:hover { background: var(--rose-deep); }
+
+.btn--ghost {
+  border: 0;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: transparent;
+}
+
+.btn--ghost:hover { color: var(--ink); }
+
+.progress {
+  margin: 1rem 0 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  min-height: 1.1em;
+}
+
+.noscript {
+  width: 100%;
+  padding: 2rem;
+  text-align: center;
+  font-family: var(--font-display);
+}
+
+/* ================================================================ larger === */
+
+@media (min-width: 640px) {
+  :root { --jar-w: min(58vh, 360px); }
+  .scroll__figure img { max-height: 34vh; }
+}
+
+/* ======================================================= reduced motion === */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

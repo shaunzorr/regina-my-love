@@ -1,0 +1,13 @@
+# Claude Code local files — keep these off GitHub Pages
+CLAUDE.md
+.claude/
+
+# OS cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
