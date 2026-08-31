@@ -470,14 +470,6 @@ body {
 
 .btn--ghost:hover { color: var(--ink); }
 
-.progress {
-  margin: 1rem 0 0;
-  font-size: 0.8rem;
-  letter-spacing: 0.04em;
-  color: var(--ink-soft);
-  min-height: 1.1em;
-}
-
 .noscript {
   width: 100%;
   padding: 2rem;
@@ -493,12 +485,67 @@ body {
 }
 
 /* ======================================================= reduced motion === */
+/*  Reduce, don't remove. Everything that travels, spins, loops or flies is
+    dropped — that's the part that actually bothers people — but the note
+    still arrives on a soft fade rather than snapping into place, so the jar
+    never feels broken. Windows users: this kicks in when
+    Settings > Accessibility > Visual effects > Animation effects is off.     */
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.001ms !important;
-    animation-delay: 0ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
+
+  /* idle loops and the whole jar-opening flourish */
+  .jar-float,
+  .hint,
+  .jar.is-opening .jar-svg,
+  .jar.is-opening #lid,
+  .jar.is-opening .spark {
+    animation: none !important;
   }
+
+  /* no rise out of the jar, no unrolling — just a fade */
+  .scroll.is-emerging {
+    animation: gentle-in 420ms ease both !important;
+  }
+
+  .scroll.is-emerging .scroll__paper,
+  .scroll.is-emerging .scroll__roll {
+    animation: none !important;
+  }
+
+  .scroll.is-emerging .scroll__content {
+    animation: gentle-in 360ms ease 140ms both !important;
+  }
+
+  .scroll.is-emerging ~ .note-chrome {
+    animation: gentle-in 360ms ease 200ms both !important;
+  }
+
+  .scroll.is-retracting {
+    animation: gentle-out 240ms ease both !important;
+  }
+
+  .scroll.is-retracting .scroll__paper,
+  .scroll.is-retracting .scroll__roll,
+  .scroll.is-retracting .scroll__content {
+    animation: none !important;
+  }
+
+  .scroll.is-retracting ~ .note-chrome {
+    animation: gentle-out 200ms ease both !important;
+  }
+
+  .jar-wrap {
+    transition-duration: 300ms !important;
+    transition-delay: 0ms !important;
+  }
+}
+
+@keyframes gentle-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes gentle-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
 }

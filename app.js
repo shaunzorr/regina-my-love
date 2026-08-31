@@ -9,9 +9,12 @@
   var STORAGE_KEY = 'hundred-reasons:seen:v1';
 
   /* Total length of each sequence. Must stay >= the longest animation defined
-     in style.css (emerge ends at 1480ms, retract at 440ms). */
+     in style.css — full: emerge ends 1480ms, retract 440ms; reduced-motion:
+     the fades end at 560ms and 240ms. */
   var EMERGE_MS = 1480;
   var RETRACT_MS = 440;
+  var EMERGE_MS_REDUCED = 560;
+  var RETRACT_MS_REDUCED = 240;
 
   var scene       = document.getElementById('scene');
   var jarBtn      = document.getElementById('jar');
@@ -23,10 +26,13 @@
   var paperFigure = document.getElementById('paper-figure');
   var paperImage  = document.getElementById('paper-image');
   var returnBtn   = document.getElementById('return');
-  var progressEl  = document.getElementById('progress');
   var cycleNote   = document.getElementById('cycle-note');
 
-  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /* Read live rather than once, so toggling the OS setting takes effect
+     without a reload. */
+  var motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function emergeMs()  { return motionQuery.matches ? EMERGE_MS_REDUCED  : EMERGE_MS; }
+  function retractMs() { return motionQuery.matches ? RETRACT_MS_REDUCED : RETRACT_MS; }
 
   var busy = false;
   var noteOut = false;
@@ -141,9 +147,6 @@
       paperImage.removeAttribute('src');
     }
 
-    progressEl.textContent =
-      result.seenCount + ' / ' + result.total + ' reasons opened this cycle';
-
     if (result.cycleComplete) {
       cycleNote.textContent = 'that’s every reason for now — the jar just refilled ✨';
       cycleNote.hidden = false;
@@ -197,7 +200,7 @@
     restart(jarBtn, 'is-opening');
     scroll.classList.add('is-emerging');
 
-    after(reduceMotion ? 0 : EMERGE_MS, function () {
+    after(emergeMs(), function () {
       scroll.classList.remove('is-emerging'); // base styles == final keyframe
       jarBtn.classList.remove('is-opening');
       busy = false;
@@ -210,7 +213,7 @@
     scroll.classList.remove('is-emerging');
     restart(scroll, 'is-retracting');
 
-    after(reduceMotion ? 0 : RETRACT_MS, function () {
+    after(retractMs(), function () {
       scroll.classList.remove('is-retracting');
       noteLayer.hidden = true;
       scene.classList.remove('has-note');
