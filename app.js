@@ -34,14 +34,33 @@
   function emergeMs()  { return motionQuery.matches ? EMERGE_MS_REDUCED  : EMERGE_MS; }
   function retractMs() { return motionQuery.matches ? RETRACT_MS_REDUCED : RETRACT_MS; }
 
-  /* --- splash --------------------------------------------------------------
-     Greets her on load, then hands over to the jar on its own. A tap, Enter,
-     Space or Escape skips it. Deliberately set up before the empty-jar guard
-     below, so the splash can never get stuck on screen.
+  /* --- focus without the ring ----------------------------------------------
+     Focus still moves, so screen readers announce what just appeared. But a
+     focus ring drawn right after a tap reads as a stray border, so it is
+     suppressed unless the last thing she used was the keyboard.
   ------------------------------------------------------------------------- */
 
-  var SPLASH_HOLD = 4200;
-  var SPLASH_HOLD_REDUCED = 2400;
+  var lastInputKeyboard = false;
+  window.addEventListener('keydown', function () { lastInputKeyboard = true; }, true);
+  window.addEventListener('pointerdown', function () { lastInputKeyboard = false; }, true);
+
+  function quietFocus(el) {
+    if (!el) return;
+    if (!lastInputKeyboard) {
+      el.setAttribute('data-quiet-focus', '');
+      el.addEventListener('blur', function drop() {
+        el.removeAttribute('data-quiet-focus');
+        el.removeEventListener('blur', drop);
+      });
+    }
+    el.focus({ preventScroll: true });
+  }
+
+  /* --- splash --------------------------------------------------------------
+     Greets her on load and waits for a tap — it never dismisses itself.
+     Enter, Space or Escape work too, for keyboards.
+  ------------------------------------------------------------------------- */
+
   var SPLASH_OUT = 560;
   var SPLASH_OUT_REDUCED = 300;
 
@@ -53,13 +72,11 @@
     splash.classList.add('is-leaving');
     window.setTimeout(function () {
       splash.hidden = true;
-      jarBtn.focus({ preventScroll: true });
+      quietFocus(jarBtn);
     }, motionQuery.matches ? SPLASH_OUT_REDUCED : SPLASH_OUT);
   }
 
   if (splash) {
-    window.setTimeout(dismissSplash,
-      motionQuery.matches ? SPLASH_HOLD_REDUCED : SPLASH_HOLD);
     splash.addEventListener('click', dismissSplash);
     window.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') dismissSplash();
@@ -247,7 +264,7 @@
       scroll.classList.remove('is-emerging'); // base styles == final keyframe
       jarBtn.classList.remove('is-opening');
       busy = false;
-      paper.focus({ preventScroll: true }); // so screen readers announce the note
+      quietFocus(paper); // so screen readers announce the note
     });
   }
 
@@ -262,7 +279,7 @@
       scene.classList.remove('has-note');
       noteOut = false;
       busy = false;
-      jarBtn.focus({ preventScroll: true });
+      quietFocus(jarBtn);
     });
   }
 

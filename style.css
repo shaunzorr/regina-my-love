@@ -243,6 +243,12 @@ body {
   border-radius: 28px;
 }
 
+/* Focus moved by script after a tap — keep it silent (see quietFocus). */
+[data-quiet-focus]:focus-visible,
+[data-quiet-focus]:focus {
+  outline: none !important;
+}
+
 .jar:focus-visible {
   outline: 3px solid var(--rose);
   outline-offset: 6px;
