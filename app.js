@@ -41,7 +41,16 @@
 
   /* --- guard: nothing to show --------------------------------------------- */
 
-  if (typeof NOTES === 'undefined' || !Array.isArray(NOTES) || NOTES.length === 0) {
+  /* Notes with an empty text are placeholders you haven't written yet — they
+     are never drawn. Fill one in and it joins the pool on the next visit,
+     no other change needed. */
+  function writtenNotes() {
+    return (typeof NOTES !== 'undefined' && Array.isArray(NOTES))
+      ? NOTES.filter(function (n) { return n && n.text && n.text.trim(); })
+      : [];
+  }
+
+  if (writtenNotes().length === 0) {
     noteLayer.hidden = false;
     scene.classList.add('has-note');
     paperText.textContent = 'The jar is empty right now — add some notes in notes.js 💌';
@@ -92,15 +101,17 @@
   ------------------------------------------------------------------------- */
 
   function draw() {
+    var written = writtenNotes();
+
     var validIds = Object.create(null);
-    NOTES.forEach(function (n) { validIds[n.id] = true; });
+    written.forEach(function (n) { validIds[n.id] = true; });
 
     var seen = loadSeen().filter(function (id) { return validIds[id]; });
-    var pool = NOTES.filter(function (n) { return seen.indexOf(n.id) === -1; });
+    var pool = written.filter(function (n) { return seen.indexOf(n.id) === -1; });
 
     if (pool.length === 0) {
       seen = [];
-      pool = NOTES.slice();
+      pool = written.slice();
       // don't repeat the last note straight across the cycle boundary
       if (lastShownId && pool.length > 1) {
         pool = pool.filter(function (n) { return n.id !== lastShownId; });
@@ -115,8 +126,8 @@
     return {
       note: note,
       seenCount: seen.length,
-      total: NOTES.length,
-      cycleComplete: seen.length === NOTES.length
+      total: written.length,
+      cycleComplete: seen.length === written.length
     };
   }
 
