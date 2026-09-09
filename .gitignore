@@ -1,6 +1,8 @@
 # Claude Code local files — keep these off GitHub Pages
 CLAUDE.md
+README.md
 .claude/
+
 
 # OS cruft
 .DS_Store
