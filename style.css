@@ -60,6 +60,132 @@ body {
 
 [hidden] { display: none !important; }
 
+/* ================================================================ splash === */
+
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  touch-action: manipulation;
+  background:
+    radial-gradient(120% 90% at 50% 8%, #fff7f0 0%, rgba(255, 247, 240, 0) 55%),
+    linear-gradient(168deg, #ffeef0, #ffe0ea 55%, #ffd3e2);
+}
+
+.splash.is-leaving {
+  animation: splash-out 560ms ease forwards;
+  pointer-events: none;
+}
+
+@keyframes splash-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(1.04); }
+}
+
+.splash__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 22rem;
+}
+
+.splash__eyebrow {
+  margin: 0 0 0.65rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--rose);
+  animation: rise-in 600ms ease-out 150ms both;
+}
+
+.splash__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2rem, 9.5vw, 3rem);
+  line-height: 1.12;
+  color: var(--rose-deep);
+  text-wrap: balance;
+  animation: rise-in 750ms cubic-bezier(0.2, 0.8, 0.3, 1) 320ms both;
+}
+
+.splash__sub {
+  margin: 0.95rem 0 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1rem, 4.4vw, 1.15rem);
+  color: var(--ink-soft);
+  animation: rise-in 600ms ease-out 720ms both;
+}
+
+.splash__cue {
+  display: block;
+  margin-top: 2.1rem;
+  font-size: 0.73rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--rose);
+  animation:
+    rise-in 500ms ease-out 1150ms both,
+    soft-pulse 2.4s ease-in-out 1750ms infinite;
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes soft-pulse {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+
+/* floating hearts */
+
+.splash__hearts {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.fheart {
+  position: absolute;
+  bottom: -10vh;
+  left: var(--x);
+  width: 20px;
+  height: 18px;
+  animation: float-up var(--dur) linear var(--d) infinite;
+}
+
+.fheart::before,
+.fheart::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 10px;
+  height: 16px;
+  border-radius: 10px 10px 0 0;
+  background: var(--c, #e7889e);
+}
+
+.fheart::before { left: 10px; transform: rotate(-45deg); transform-origin: 0 100%; }
+.fheart::after  { left: 0;    transform: rotate(45deg);  transform-origin: 100% 100%; }
+
+@keyframes float-up {
+  0%   { opacity: 0;    transform: translateY(0) scale(var(--s)) rotate(0deg); }
+  12%  { opacity: 0.85; }
+  85%  { opacity: 0.45; }
+  100% { opacity: 0;    transform: translateY(-118vh) scale(var(--s)) rotate(var(--r)); }
+}
+
 /* ================================================================= scene === */
 
 .scene {
@@ -507,6 +633,20 @@ body {
     Settings > Accessibility > Visual effects > Animation effects is off.     */
 
 @media (prefers-reduced-motion: reduce) {
+
+  /* the splash still greets her, just without the drifting hearts */
+  .splash__hearts { display: none; }
+
+  .splash__eyebrow,
+  .splash__title,
+  .splash__sub,
+  .splash__cue {
+    animation: gentle-in 400ms ease both !important;
+  }
+
+  .splash.is-leaving {
+    animation: gentle-out 300ms ease forwards !important;
+  }
 
   /* idle loops and the whole jar-opening flourish */
   .jar-float,

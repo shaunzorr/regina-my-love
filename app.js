@@ -34,6 +34,38 @@
   function emergeMs()  { return motionQuery.matches ? EMERGE_MS_REDUCED  : EMERGE_MS; }
   function retractMs() { return motionQuery.matches ? RETRACT_MS_REDUCED : RETRACT_MS; }
 
+  /* --- splash --------------------------------------------------------------
+     Greets her on load, then hands over to the jar on its own. A tap, Enter,
+     Space or Escape skips it. Deliberately set up before the empty-jar guard
+     below, so the splash can never get stuck on screen.
+  ------------------------------------------------------------------------- */
+
+  var SPLASH_HOLD = 4200;
+  var SPLASH_HOLD_REDUCED = 2400;
+  var SPLASH_OUT = 560;
+  var SPLASH_OUT_REDUCED = 300;
+
+  var splash = document.getElementById('splash');
+
+  function dismissSplash() {
+    if (!splash || splash.dataset.gone) return;
+    splash.dataset.gone = '1';
+    splash.classList.add('is-leaving');
+    window.setTimeout(function () {
+      splash.hidden = true;
+      jarBtn.focus({ preventScroll: true });
+    }, motionQuery.matches ? SPLASH_OUT_REDUCED : SPLASH_OUT);
+  }
+
+  if (splash) {
+    window.setTimeout(dismissSplash,
+      motionQuery.matches ? SPLASH_HOLD_REDUCED : SPLASH_HOLD);
+    splash.addEventListener('click', dismissSplash);
+    window.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') dismissSplash();
+    });
+  }
+
   var busy = false;
   var noteOut = false;
   var lastShownId = null;
@@ -239,6 +271,9 @@
      shortcut — the jar itself is the only draw. */
   function pull() {
     if (busy || noteOut) return;
+    // the jar is still keyboard-reachable behind the splash — don't let Enter
+    // dismiss the splash and pull a note in the same keystroke
+    if (splash && !splash.hidden) return;
     clearTimers();
     emerge();
   }
