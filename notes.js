@@ -48,8 +48,8 @@ const NOTES = [
   { id: "024", type: "image", text: "We are such a cool couple 😎", image: "images/cool.jpg"},
   { id: "025", type: "image", text: "All of your funny faces.", image: "images/faces.jpg"},
   { id: "026", type: "text", text: "Your funny theories about why things are happening."},
-  { id: "027", type: "text", text: ""},
-  { id: "028", type: "text", text: ""},
-  { id: "029", type: "text", text: ""},
+  { id: "027", type: "text", text: "You are the most beautiful girl in the world, both inside and outside."},
+  { id: "028", type: "text", text: "You are the perfect amount of jealous yet still trust me."},
+  { id: "029", type: "text", text: "Your cute freckles."},
   { id: "030", type: "text", text: ""},
 ];
