@@ -45,7 +45,7 @@ const NOTES = [
   { id: "021", type: "image", text: "Your kind and loving family.", image: "images/family.jpg"},
   { id: "022", type: "text", text: "The way you always ask me to explain things."},
   { id: "023", type: "image", text: "You like watching movies with me.", image: "images/movies.jpg"},
-  { id: "024", type: "image", text: "We are such a cool couple 😎", image: "images/cool.jpg"},
+  { id: "024", type: "image", text: "We are the coolest couple 😎", image: "images/cool.jpg"},
   { id: "025", type: "image", text: "All of your funny faces.", image: "images/faces.jpg"},
   { id: "026", type: "text", text: "Your funny theories about why things are happening."},
   { id: "027", type: "text", text: "You are the most beautiful girl in the world, both inside and outside."},

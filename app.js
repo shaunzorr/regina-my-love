@@ -65,12 +65,21 @@
   var SPLASH_OUT_REDUCED = 300;
 
   var splash = document.getElementById('splash');
+  var heartsEl = document.getElementById('hearts');
+  var appEl = document.getElementById('app');
 
   function dismissSplash() {
     if (!splash || splash.dataset.gone) return;
     splash.dataset.gone = '1';
     splash.classList.add('is-leaving');
     window.setTimeout(function () {
+      /* Hand the hearts over to the page so they keep drifting behind the
+         jar instead of disappearing with the splash. */
+      if (heartsEl && appEl && heartsEl.parentNode !== document.body) {
+        heartsEl.classList.remove('splash__hearts');
+        heartsEl.classList.add('hearts--bg');
+        document.body.insertBefore(heartsEl, appEl);
+      }
       splash.hidden = true;
       quietFocus(jarBtn);
     }, motionQuery.matches ? SPLASH_OUT_REDUCED : SPLASH_OUT);

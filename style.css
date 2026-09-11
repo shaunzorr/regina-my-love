@@ -47,6 +47,8 @@ body {
 }
 
 #app {
+  position: relative;
+  z-index: 1;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -149,6 +151,18 @@ body {
 }
 
 /* floating hearts */
+
+/* Once the splash is dismissed the very same hearts layer is re-parented to
+   the page (see app.js) and keeps drifting behind the jar, a little fainter
+   so it never competes with a note. */
+.hearts--bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 0.5;
+  pointer-events: none;
+}
 
 .splash__hearts {
   position: absolute;
@@ -641,7 +655,8 @@ body {
 @media (prefers-reduced-motion: reduce) {
 
   /* the splash still greets her, just without the drifting hearts */
-  .splash__hearts { display: none; }
+  .splash__hearts,
+  .hearts--bg { display: none; }
 
   .splash__eyebrow,
   .splash__title,
