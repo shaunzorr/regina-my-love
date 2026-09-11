@@ -51,5 +51,5 @@ const NOTES = [
   { id: "027", type: "text", text: "You are the most beautiful girl in the world, both inside and outside."},
   { id: "028", type: "text", text: "You are the perfect amount of jealous yet still trust me."},
   { id: "029", type: "text", text: "Your cute freckles."},
-  { id: "030", type: "text", text: ""},
+  { id: "030", type: "text", text: "You make me feel calm and at peace."},
 ];
